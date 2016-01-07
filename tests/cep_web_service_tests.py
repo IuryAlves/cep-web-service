@@ -13,34 +13,34 @@ class CepWebServiceTests(unittest.TestCase):
     def setUpClass(cls):
         cls.test_app = app.test_client()
 
-    def test_get_zipcode(self):
-        response = self.test_app.get("/zipcode", data={'zipcode': 14020260})
+    def test_get_zip_code(self):
+        response = self.test_app.get("/zipcode", data={'zip_code': 14020260})
 
         self.assertEquals(response.status_code, 200)
 
-    def test_post_zipcode(self):
-        response = CepWebServiceTests.test_app.post("/zipcode", data={"zipcode": 14020260})
+    def test_post_zip_code(self):
+        response = CepWebServiceTests.test_app.post("/zipcode", data={"zip_code": 14020260})
 
         self.assertEquals(response.content_type, 'application/json')
         self.assertEquals(response.status_code, 201)
 
-    def test_post_zipcode_without_data(self):
+    def test_post_zip_code_without_data(self):
         response = CepWebServiceTests.test_app.post("/zipcode")
 
         self.assertEquals(response.content_type, 'application/json')
         self.assertEquals(response.status_code, 400)
 
-    def test_get_zipcodes(self):
+    def test_get_zip_codes(self):
         response = CepWebServiceTests.test_app.get('/zipcode', data={'limit': 10})
 
         self.assertEquals(response.status_code, 200)
 
-    def test_delete_zipcode(self):
-        response = CepWebServiceTests.test_app.delete('/zipcode', data={'zipcode': 14020260})
+    def test_delete_zip_code(self):
+        response = CepWebServiceTests.test_app.delete('/zipcode', data={'zip_code': 14020260})
 
         self.assertEquals(response.status_code, 204)
 
-    def test_delete_zipcode_without_zipcode(self):
+    def test_delete_zip_code_without_zip_code(self):
         response = CepWebServiceTests.test_app.delete('/zipcode')
 
         self.assertEquals(response.status_code, 400)

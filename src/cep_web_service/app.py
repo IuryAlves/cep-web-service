@@ -16,7 +16,7 @@ class ZipcodeResource(Resource):
 
     def post(self):
         parser = reqparse.RequestParser()
-        parser.add_argument('zipcode', required=True)
+        parser.add_argument('zip_code', required=True)
         args = parser.parse_args(strict=True)
 
         return [], 201
@@ -24,11 +24,11 @@ class ZipcodeResource(Resource):
     def get(self):
         parser = reqparse.RequestParser()
         parser.add_argument('limit')
-        parser.add_argument('zipcode')
+        parser.add_argument('zip_code')
         args = parser.parse_args(strict=True)
 
         limit = args.get('limit')
-        zipcode = args.get('zipcode')
+        zipcode = args.get('zip_code')
         if limit is not None:
             pass
             # list zipcodes
@@ -40,7 +40,7 @@ class ZipcodeResource(Resource):
 
     def delete(self):
         parser = reqparse.RequestParser()
-        parser.add_argument('zipcode', required=True)
+        parser.add_argument('zip_code', required=True)
         args = parser.parse_args(strict=True)
 
         return [], 204
