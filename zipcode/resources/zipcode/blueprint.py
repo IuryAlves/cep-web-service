@@ -1,12 +1,11 @@
 # coding: utf-8
 
 
-from flask import Flask
-from flask_restful import Resource, Api, reqparse
+from flask import Blueprint
+from flask_restful import Api, Resource, reqparse
 
-
-app = Flask(__name__)
-api = Api(app)
+zipcode_blueprint = Blueprint('api', __name__)
+api = Api(zipcode_blueprint)
 
 
 class ZipcodeResource(Resource):
@@ -45,8 +44,4 @@ class ZipcodeResource(Resource):
 
         return [], 204
 
-
 api.add_resource(ZipcodeResource, '/zipcode')
-
-if __name__ == '__main__':
-    app.run(debug=True)
