@@ -9,7 +9,6 @@ import os
 if __name__ == '__main__':
     ROOT_PATH = os.path.dirname(os.path.abspath(__file__)).split(os.path.sep)[:-1]
     APP_PATH = os.path.sep.join(ROOT_PATH + ['src'])
-    print(APP_PATH)
     if APP_PATH not in sys.path:
         sys.path.append(APP_PATH)
 
