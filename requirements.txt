@@ -1,4 +1,0 @@
-Flask==0.10.1
-Flask-RESTful==0.3.5
-tox==2.1.1
-pep8==1.6.2
