@@ -9,7 +9,6 @@ app = Flask(__name__)
 api = Api(app)
 
 
-
 class ZipcodeResource(Resource):
 
     def __init__(self, *args, **kwargs):
@@ -24,10 +23,27 @@ class ZipcodeResource(Resource):
 
     def get(self):
         parser = reqparse.RequestParser()
-        parser.add_argument('limit', default=1)
+        parser.add_argument('limit')
+        parser.add_argument('zipcode')
         args = parser.parse_args(strict=True)
 
+        limit = args.get('limit')
+        zipcode = args.get('zipcode')
+        if limit is not None:
+            pass
+            # list zipcodes
+        elif zipcode is not None:
+            pass
+            # get zipcode
+
         return [], 200
+
+    def delete(self):
+        parser = reqparse.RequestParser()
+        parser.add_argument('zipcode', required=True)
+        args = parser.parse_args(strict=True)
+
+        return [], 204
 
 
 api.add_resource(ZipcodeResource, '/zipcode')

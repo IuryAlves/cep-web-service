@@ -4,6 +4,7 @@
 import unittest
 from cep_web_service.app import app
 
+
 class CepWebServiceTests(unittest.TestCase):
 
     test_app = None
@@ -13,7 +14,7 @@ class CepWebServiceTests(unittest.TestCase):
         cls.test_app = app.test_client()
 
     def test_get_zipcode(self):
-        response = self.test_app.get("/zipcode")
+        response = self.test_app.get("/zipcode", data={'zipcode': 14020260})
 
         self.assertEquals(response.status_code, 200)
 
@@ -30,9 +31,20 @@ class CepWebServiceTests(unittest.TestCase):
         self.assertEquals(response.status_code, 400)
 
     def test_get_zipcodes(self):
-        response = CepWebServiceTests.test_app.get('/zipcode')
+        response = CepWebServiceTests.test_app.get('/zipcode', data={'limit': 10})
 
         self.assertEquals(response.status_code, 200)
+
+    def test_delete_zipcode(self):
+        response = CepWebServiceTests.test_app.delete('/zipcode', data={'zipcode': 14020260})
+
+        self.assertEquals(response.status_code, 204)
+
+    def test_delete_zipcode_without_zipcode(self):
+        response = CepWebServiceTests.test_app.delete('/zipcode')
+
+        self.assertEquals(response.status_code, 400)
+
 
 if __name__ == '__main__':
     unittest.main()
