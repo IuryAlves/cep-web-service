@@ -2,3 +2,5 @@
 *py[co]
 **/__pycache__
 .tox
+.coverage
+htmlcov
