@@ -6,6 +6,6 @@ before_script:
 script:
   - tox
 
-after_script:
+after_success:
   - coveralls
 
