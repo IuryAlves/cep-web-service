@@ -80,6 +80,11 @@ class CepWebServiceTests(unittest.TestCase):
         self.assertEquals(response.status_code, 404)
         endereco.assert_called_with(zip_code)
 
+    def test_get_zip_code_without_data(self):
+        response = self.test_app.get("/zipcode/")
+
+        self.assertEquals(response.status_code, 400)
+
     @patch('cep_web_service.app.zipcode.models.Zipcode.get_or_404')
     def test_get_saved_zip_code(self, get_or_404):
         get_or_404.return_value = fakedata.ZipcodeFake(fakedata.fake_endereco)
