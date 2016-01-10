@@ -3,7 +3,7 @@
 import json
 import unittest
 
-from mock import patch
+from mock import patch, Mock
 import six
 
 import fakedata
@@ -31,6 +31,28 @@ class CepWebServiceTests(unittest.TestCase):
 
         self.assertEquals(response.content_type, 'application/json')
         self.assertEquals(response.status_code, 201)
+
+        # mock assertions
+        endereco.assert_called_once_with(zip_code)
+        save_document.assert_called_once_with(
+            endereco.return_value.cep,
+            endereco.return_value.logradouro,
+            endereco.return_value.bairro,
+            endereco.return_value.cidade.nome,
+            endereco.return_value.estado.nome
+        )
+
+    @patch('postmon.endereco')
+    @patch('cep_web_service.app.zipcode.models.Zipcode.save_document')
+    def test_post_update_zip_code(self, save_document, endereco):
+        endereco.return_value = fakedata.fake_endereco()
+        save_document.return_value = False
+
+        zip_code = 14020260
+        response = self.test_app.post("/zipcode/", data={"zip_code": zip_code})
+
+        self.assertEquals(response.content_type, 'application/json')
+        self.assertEquals(response.status_code, 200)
 
         # mock assertions
         endereco.assert_called_once_with(zip_code)
@@ -83,10 +105,15 @@ class CepWebServiceTests(unittest.TestCase):
         response_decoded = decode(response.data)
         self.assertEquals(json.loads(response_decoded), expected)
 
-    def test_delete_zip_code(self):
-        response = self.test_app.delete('/zipcode/', data={'zip_code': 14020260})
+    @patch('cep_web_service.app.zipcode.models.Zipcode.get_or_404')
+    def test_delete_zip_code(self, get_or_404):
+        zip_code = 14020260
+        get_or_404.return_value = Mock(fakedata.ZipcodeFake(fakedata.fake_endereco), spec_set=['delete'])
+        response = self.test_app.delete('/zipcode/%i' % zip_code)
 
         self.assertEquals(response.status_code, 204)
+        get_or_404.assert_called_with(zip_code=zip_code)
+        get_or_404.return_value.delete.assert_called_with()
 
     def test_delete_zip_code_without_zip_code(self):
         response = self.test_app.delete('/zipcode/')

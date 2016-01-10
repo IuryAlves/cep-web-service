@@ -51,6 +51,9 @@ class ZipcodeFake():
     def __init__(self, fake_generator_function):
         self.endereco = fake_generator_function()
 
+    def delete(self, *args, **kwargs):
+        pass
+
     def to_dict(self):
         return {
             'zip_code': self.endereco.cep,

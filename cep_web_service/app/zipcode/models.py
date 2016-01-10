@@ -1,5 +1,5 @@
 from __future__ import absolute_import
-from mongoengine import queryset_manager
+from mongoengine import queryset_manager, DoesNotExist
 from cep_web_service.app import db
 
 
@@ -13,21 +13,39 @@ class Zipcode(db.Document):
         'indexes': ['zip_code']
     }
 
-    def get_or_404(self, *args, **kwargs):
-        return super(self.__class__, self).get_or_404(*args, **kwargs)
+    @classmethod
+    def get_or_404(cls, **kwargs):
+        return cls.objects.get_or_404(**kwargs)
 
     @queryset_manager
-    def limit(doc_cls, queryset, limit):
+    def limit(cls, queryset, limit):
         return queryset[:limit]
 
     @classmethod
-    def save_document(cls, zipcode, address, neighborhood, city, state):
-        return cls(
-            zip_code=zipcode,
-            address=address,
-            neighborhood=neighborhood,
-            city=city,
-            state=state).save()
+    def save_document(cls, zip_code, address, neighborhood, city, state):
+        """
+        Create or update a document
+        returns True if created and False if only updated
+        Update condition is based on zipcode. If zipcode already exists in db
+        the the document is only updated. Otherwise the document is created
+        """
+        try:
+            object_ = cls.objects.get(zip_code=zip_code)
+            object_.update(
+                address=address,
+                neighborhood=neighborhood,
+                city=city,
+                state=state
+            )
+            return False
+        except DoesNotExist:
+            cls(
+                zip_code=zip_code,
+                address=address,
+                neighborhood=neighborhood,
+                city=city,
+                state=state).save()
+            return True
 
     def to_dict(self):
         return {

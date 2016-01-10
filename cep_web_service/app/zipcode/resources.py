@@ -26,7 +26,7 @@ class ZipcodeResource(Resource):
         if result is None:
             abort(404, message="zip code %s invalid" % zip_code)
 
-        Zipcode.save_document(
+        created = Zipcode.save_document(
             result.cep,
             result.logradouro,
             result.bairro,
@@ -34,9 +34,9 @@ class ZipcodeResource(Resource):
             result.estado.nome
         )
 
-        return None, 201
+        return None, 201 if created else 200
 
-    def get(self, id=None):
+    def get(self, zip_code=None):
         parser = reqparse.RequestParser()
         parser.add_argument('limit', type=int)
         args = parser.parse_args(strict=True)
@@ -45,20 +45,20 @@ class ZipcodeResource(Resource):
         if limit is not None:
             zip_codes = Zipcode.limit(limit)
             return [zip_code.to_dict() for zip_code in zip_codes], 200
-        elif id is not None:
-            id = Zipcode.get_or_404(zip_code=id)
-            return id.to_dict(), 200
-        return {}, 200
+        elif zip_code is not None:
+            zip_code_document = Zipcode.get_or_404(zip_code=zip_code)
+            return zip_code_document.to_dict(), 200
+        abort(400, message="You must provide the limit or zipcode.")
 
-    def delete(self):
-        parser = reqparse.RequestParser()
-        parser.add_argument('zip_code', required=True)
-        args = parser.parse_args(strict=True)
-
-        return [], 204
+    def delete(self, zip_code=None):
+        if zip_code is None:
+            abort(400, messsage="You must pass pass a zip_code")
+        zip_code_document = Zipcode.get_or_404(zip_code=zip_code)
+        zip_code_document.delete()
+        return None, 204
 
 api.add_resource(
     ZipcodeResource,
     '/zipcode/',
-    '/zipcode/<int:id>',
+    '/zipcode/<int:zip_code>',
     resource_class_kwargs={'postmon': postmon})
