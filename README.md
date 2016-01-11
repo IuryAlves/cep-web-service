@@ -59,13 +59,13 @@ The same is valid for mongo instance
 
 * **Method:**
     
-         `POST`
+         POST
 
 * **Data Params**
 * 
     **Required:**
  
-           `zip_code=[string]`
+           zip_code=[string]
 
 * **Success Response:**
  
@@ -118,13 +118,13 @@ The same is valid for mongo instance
       * **Code:** 200 OK
       * **Content:** 
       
-        {
-            "address": "Avenida Presidente Vargas", 
-            "city": "Ribeirão Preto", 
-            "neighborhood": "Jardim América", 
-            "state": "São Paulo", 
-            "zip_code": "14020260"
-        }
+            {
+                "address": "Avenida Presidente Vargas", 
+                "city": "Ribeirão Preto", 
+                "neighborhood": "Jardim América", 
+                "state": "São Paulo", 
+                "zip_code": "14020260"
+            }
         
       If limit
       
