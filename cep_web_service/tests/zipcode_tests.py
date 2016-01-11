@@ -33,7 +33,7 @@ class CepWebServiceTests(unittest.TestCase):
         cidade_nome = endereco.return_value.cidade.nome
         estado_nome = endereco.return_value.estado.nome
 
-        zip_code = 14020260
+        zip_code = '14020260'
         response = self.test_app.post("/zipcode/", data={"zip_code": zip_code})
 
         self.assertEquals(response.content_type, 'application/json')
@@ -64,7 +64,7 @@ class CepWebServiceTests(unittest.TestCase):
         estado_nome = endereco.return_value.estado.nome
         save_document.return_value = False
 
-        zip_code = 14020260
+        zip_code = '14020260'
         response = self.test_app.post("/zipcode/", data={"zip_code": zip_code})
 
         self.assertEquals(response.content_type, 'application/json')
@@ -93,7 +93,7 @@ class CepWebServiceTests(unittest.TestCase):
     @patch('cep_web_service.app.app.error_logger.error')
     def test_post_zip_code_invalid(self, logger, endereco):
         endereco.return_value = None
-        zip_code = 1402260
+        zip_code = '1402260'
         response = self.test_app.post("/zipcode/", data={'zip_code': zip_code})
 
         self.assertEquals(response.content_type, 'application/json')
@@ -112,8 +112,8 @@ class CepWebServiceTests(unittest.TestCase):
     @patch('cep_web_service.app.zipcode.models.Zipcode.get_or_404')
     def test_get_saved_zip_code(self, get_or_404, logger):
         get_or_404.return_value = fakedata.ZipcodeFake(fakedata.fake_endereco)
-        zip_code = 14020260
-        response = self.test_app.get('/zipcode/%i' % zip_code)
+        zip_code = '14020260'
+        response = self.test_app.get('/zipcode/%s' % zip_code)
 
         self.assertEquals(response.status_code, 200)
 
@@ -121,7 +121,7 @@ class CepWebServiceTests(unittest.TestCase):
 
         self.assertEquals(json.loads(response_data_decoded), get_or_404.return_value.to_dict())
         get_or_404.assert_called_with(message='zip code {zip_code} not found.'.format(zip_code=zip_code),
-                                      zip_code=14020260)
+                                      zip_code=zip_code)
         logger.assert_called_with("Get zip_code: {zip_code}".format(zip_code=zip_code))
 
     @patch('cep_web_service.app.app.info_logger.info')
@@ -160,13 +160,13 @@ class CepWebServiceTests(unittest.TestCase):
     @patch('cep_web_service.app.app.info_logger.info')
     @patch('cep_web_service.app.zipcode.models.Zipcode.get_or_404')
     def test_delete_zip_code(self, get_or_404, logger):
-        zip_code = 14020260
+        zip_code = '14020260'
         get_or_404.return_value = Mock(fakedata.ZipcodeFake(fakedata.fake_endereco), spec_set=['delete'])
-        response = self.test_app.delete('/zipcode/%i' % zip_code)
+        response = self.test_app.delete('/zipcode/%s' % zip_code)
 
         self.assertEquals(response.status_code, 204)
         get_or_404.assert_called_with(message='zip code {zip_code} not found.'.format(zip_code=zip_code),
-                                      zip_code=14020260)
+                                      zip_code=zip_code)
         get_or_404.return_value.delete.assert_called_with()
         logger.assert_called_with("zip_code: {zip_code} were deleted.".format(zip_code=zip_code))
 
