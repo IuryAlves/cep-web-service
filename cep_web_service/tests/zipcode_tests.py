@@ -23,9 +23,16 @@ class CepWebServiceTests(unittest.TestCase):
         self.test_app = app.test_client()
 
     @patch('postmon.endereco')
+    @patch('cep_web_service.app.app.info_logger.info')
     @patch('cep_web_service.app.zipcode.models.Zipcode.save_document')
-    def test_post_zip_code(self, save_document, endereco):
+    def test_post_zip_code(self, save_document, logger, endereco):
         endereco.return_value = fakedata.fake_endereco()
+        cep = endereco.return_value.cep
+        logradouro = endereco.return_value.logradouro
+        bairro = endereco.return_value.bairro
+        cidade_nome = endereco.return_value.cidade.nome
+        estado_nome = endereco.return_value.estado.nome
+
         zip_code = 14020260
         response = self.test_app.post("/zipcode/", data={"zip_code": zip_code})
 
@@ -33,19 +40,28 @@ class CepWebServiceTests(unittest.TestCase):
         self.assertEquals(response.status_code, 201)
 
         # mock assertions
+        logger.assert_called_with("Document created with data"
+                                  " cep: {cep},"
+                                  " logradouro: {logradouro},"
+                                  " bairro: {bairro},"
+                                  " cidade: {cidade},"
+                                  " estado: {estado}".format(cep=cep, logradouro=logradouro,
+                                                             bairro=bairro, cidade=cidade_nome,
+                                                             estado=estado_nome))
+
         endereco.assert_called_once_with(zip_code)
-        save_document.assert_called_once_with(
-            endereco.return_value.cep,
-            endereco.return_value.logradouro,
-            endereco.return_value.bairro,
-            endereco.return_value.cidade.nome,
-            endereco.return_value.estado.nome
-        )
+        save_document.assert_called_once_with(cep, logradouro, bairro, cidade_nome, estado_nome)
 
     @patch('postmon.endereco')
+    @patch('cep_web_service.app.app.info_logger.info')
     @patch('cep_web_service.app.zipcode.models.Zipcode.save_document')
-    def test_post_update_zip_code(self, save_document, endereco):
+    def test_post_update_zip_code(self, save_document, logger, endereco):
         endereco.return_value = fakedata.fake_endereco()
+        cep = endereco.return_value.cep
+        logradouro = endereco.return_value.logradouro
+        bairro = endereco.return_value.bairro
+        cidade_nome = endereco.return_value.cidade.nome
+        estado_nome = endereco.return_value.estado.nome
         save_document.return_value = False
 
         zip_code = 14020260
@@ -55,14 +71,15 @@ class CepWebServiceTests(unittest.TestCase):
         self.assertEquals(response.status_code, 200)
 
         # mock assertions
+        logger.assert_called_with("Document with cep {cep} has been updated with"
+                                  " logradouro: {logradouro},"
+                                  " bairro: {bairro},"
+                                  " cidade: {cidade},"
+                                  " estado: {estado}".format(cep=cep, logradouro=logradouro,
+                                                             bairro=bairro, cidade=cidade_nome,
+                                                             estado=estado_nome))
         endereco.assert_called_once_with(zip_code)
-        save_document.assert_called_once_with(
-            endereco.return_value.cep,
-            endereco.return_value.logradouro,
-            endereco.return_value.bairro,
-            endereco.return_value.cidade.nome,
-            endereco.return_value.estado.nome
-        )
+        save_document.assert_called_once_with(cep, logradouro, bairro, cidade_nome, estado_nome)
 
     def test_post_zip_code_without_data(self):
         response = self.test_app.post("/zipcode/")
@@ -71,7 +88,8 @@ class CepWebServiceTests(unittest.TestCase):
         self.assertEquals(response.status_code, 400)
 
     @patch('postmon.endereco')
-    def test_post_zip_code_invalid(self, endereco):
+    @patch('cep_web_service.app.app.error_logger.error')
+    def test_post_zip_code_invalid(self, logger, endereco):
         endereco.return_value = None
         zip_code = 1402260
         response = self.test_app.post("/zipcode/", data={'zip_code': zip_code})
@@ -79,6 +97,7 @@ class CepWebServiceTests(unittest.TestCase):
         self.assertEquals(response.content_type, 'application/json')
         self.assertEquals(response.status_code, 404)
         endereco.assert_called_with(zip_code)
+        logger.assert_called_with('Received invalid zip_code: {zip_code}'.format(zip_code=zip_code))
 
     def test_get_zip_code_without_data(self):
         response = self.test_app.get("/zipcode/")

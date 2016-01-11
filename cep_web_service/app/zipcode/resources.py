@@ -5,6 +5,7 @@ from flask import Blueprint
 from flask_restful import Api, Resource, reqparse, abort
 import postmon
 
+from cep_web_service.app import app
 from .models import Zipcode
 
 zipcode_blueprint = Blueprint('api', __name__)
@@ -24,17 +25,46 @@ class ZipcodeResource(Resource):
 
         result = self.postmon.endereco(zip_code)
         if result is None:
-            abort(404, message="zip code %s invalid" % zip_code)
+            app.error_logger.error('Received invalid zip_code: {zip_code}'.format(zip_code=zip_code))
+            abort(404, message="zip code {zip_code} invalid".format(zip_code=zip_code))
+
+        cep = result.cep
+        logradouro = result.logradouro
+        bairro = result.bairro
+        cidade_nome = result.cidade.nome
+        estado_nome = result.estado.nome
 
         created = Zipcode.save_document(
-            result.cep,
-            result.logradouro,
-            result.bairro,
-            result.cidade.nome,
-            result.estado.nome
+            cep,
+            logradouro,
+            bairro,
+            cidade_nome,
+            estado_nome
         )
 
-        return None, 201 if created else 200
+        if created:
+            app.info_logger.info("Document created with data"
+                                 " cep: {cep},"
+                                 " logradouro: {logradouro},"
+                                 " bairro: {bairro},"
+                                 " cidade: {cidade},"
+                                 " estado: {estado}".format(cep=cep,
+                                                            logradouro=logradouro,
+                                                            bairro=bairro,
+                                                            cidade=cidade_nome,
+                                                            estado=estado_nome))
+            return None, 201
+
+        app.info_logger.info("Document with cep {cep} has been updated with"
+                             " logradouro: {logradouro},"
+                             " bairro: {bairro},"
+                             " cidade: {cidade},"
+                             " estado: {estado}".format(cep=cep,
+                                                        logradouro=logradouro,
+                                                        bairro=bairro,
+                                                        cidade=cidade_nome,
+                                                        estado=estado_nome))
+        return None, 200
 
     def get(self, zip_code=None):
         parser = reqparse.RequestParser()
