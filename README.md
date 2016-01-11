@@ -9,6 +9,7 @@ For example:`DEBUG` is set to true, for tests purposes. In production is better 
 1. [Installing](#installing)
 2. [running](#running)
 3. [API](#api)
+4. [Contributing](#contributing)
 
 
 
@@ -231,3 +232,17 @@ If the quantity of documents is lower than the limit, the server will return all
 * **Sample Call:**
 
         curl -X DELETE localhost:5000/zipcode/14020260
+
+## Contributing <a name='contributing'></a>
+
+* Install the dev_requirements (virtualenv needs to be active)
+        
+        pip install -r requirements/dev_requirements.txt
+
+* Run the tests and pep8
+
+        tox
+
+**All Pull Requests are welcome!**
+
+If you found a bug feel free to open one issue.
