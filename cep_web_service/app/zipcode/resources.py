@@ -21,7 +21,7 @@ class ZipcodeResource(Resource):
 
     def post(self):
         parser = reqparse.RequestParser()
-        parser.add_argument('zip_code', required=True, type=int)
+        parser.add_argument('zip_code', required=True, type=six.text_type)
         args = parser.parse_args(strict=True)
         zip_code = args.get("zip_code")
 
@@ -98,5 +98,5 @@ class ZipcodeResource(Resource):
 api.add_resource(
     ZipcodeResource,
     '/zipcode/',
-    '/zipcode/<int:zip_code>',
+    '/zipcode/<string:zip_code>',
     resource_class_kwargs={'postmon': postmon})

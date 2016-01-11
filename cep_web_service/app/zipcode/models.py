@@ -5,7 +5,7 @@ from cep_web_service.app import db
 
 
 class Zipcode(db.Document):
-    zip_code = db.IntField(required=True)
+    zip_code = db.StringField(required=True)
     address = db.StringField(required=False)
     neighborhood = db.StringField(required=False)
     city = db.StringField(required=True)
