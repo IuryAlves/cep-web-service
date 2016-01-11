@@ -40,12 +40,12 @@ class CepWebServiceTests(unittest.TestCase):
         self.assertEquals(response.status_code, 201)
 
         # mock assertions
-        logger.assert_called_with("Document created with data"
+        logger.assert_called_with(six.u("Document created with data"
                                   " cep: {cep},"
                                   " logradouro: {logradouro},"
                                   " bairro: {bairro},"
                                   " cidade: {cidade},"
-                                  " estado: {estado}".format(cep=cep, logradouro=logradouro,
+                                  " estado: {estado}").format(cep=cep, logradouro=logradouro,
                                                              bairro=bairro, cidade=cidade_nome,
                                                              estado=estado_nome))
 
@@ -71,11 +71,11 @@ class CepWebServiceTests(unittest.TestCase):
         self.assertEquals(response.status_code, 200)
 
         # mock assertions
-        logger.assert_called_with("Document with cep {cep} has been updated with"
+        logger.assert_called_with(six.u("Document with cep {cep} has been updated with"
                                   " logradouro: {logradouro},"
                                   " bairro: {bairro},"
                                   " cidade: {cidade},"
-                                  " estado: {estado}".format(cep=cep, logradouro=logradouro,
+                                  " estado: {estado}").format(cep=cep, logradouro=logradouro,
                                                              bairro=bairro, cidade=cidade_nome,
                                                              estado=estado_nome))
         endereco.assert_called_once_with(zip_code)
