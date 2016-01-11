@@ -97,7 +97,7 @@ class CepWebServiceTests(unittest.TestCase):
         response = self.test_app.post("/zipcode/", data={'zip_code': zip_code})
 
         self.assertEquals(response.content_type, 'application/json')
-        self.assertEquals(response.status_code, 404)
+        self.assertEquals(response.status_code, 422)
         endereco.assert_called_with(zip_code)
         logger.assert_called_with('Received invalid zip_code: {zip_code}'.format(zip_code=zip_code))
 

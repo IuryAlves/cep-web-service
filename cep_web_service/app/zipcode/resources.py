@@ -28,7 +28,7 @@ class ZipcodeResource(Resource):
         result = self.postmon.endereco(zip_code)
         if result is None:
             app.error_logger.error('Received invalid zip_code: {zip_code}'.format(zip_code=zip_code))
-            abort(404, message="zip code {zip_code} is invalid".format(zip_code=zip_code))
+            abort(422, message="zip code {zip_code} is invalid".format(zip_code=zip_code))
 
         cep = result.cep
         logradouro = result.logradouro
@@ -88,7 +88,7 @@ class ZipcodeResource(Resource):
     def delete(self, zip_code=None):
         if zip_code is None:
             app.error_logger.error("No zip_code were found in the request.")
-            abort(400, messsage="You must pass pass a zip_code.")
+            abort(400, messsage="You must provide a zip_code.")
         zip_code_document = Zipcode.get_or_404(zip_code=zip_code,
                                                message="zip code {zip_code} not found.".format(zip_code=zip_code))
         zip_code_document.delete()
