@@ -68,7 +68,7 @@ class CepWebServiceTests(unittest.TestCase):
         response = self.test_app.post("/zipcode/", data={"zip_code": zip_code})
 
         self.assertEquals(response.content_type, 'application/json')
-        self.assertEquals(response.status_code, 200)
+        self.assertEquals(response.status_code, 201)
 
         # mock assertions
         expected_log_message = six.u("Document with cep {cep} has been updated with "
@@ -120,7 +120,8 @@ class CepWebServiceTests(unittest.TestCase):
         response_data_decoded = decode(response.data)
 
         self.assertEquals(json.loads(response_data_decoded), get_or_404.return_value.to_dict())
-        get_or_404.assert_called_with(zip_code=zip_code)
+        get_or_404.assert_called_with(message='zip code {zip_code} not found.'.format(zip_code=zip_code),
+                                      zip_code=14020260)
         logger.assert_called_with("Get zip_code: {zip_code}".format(zip_code=zip_code))
 
     @patch('cep_web_service.app.app.info_logger.info')
@@ -164,7 +165,8 @@ class CepWebServiceTests(unittest.TestCase):
         response = self.test_app.delete('/zipcode/%i' % zip_code)
 
         self.assertEquals(response.status_code, 204)
-        get_or_404.assert_called_with(zip_code=zip_code)
+        get_or_404.assert_called_with(message='zip code {zip_code} not found.'.format(zip_code=zip_code),
+                                      zip_code=14020260)
         get_or_404.return_value.delete.assert_called_with()
         logger.assert_called_with("zip_code: {zip_code} were deleted.".format(zip_code=zip_code))
 

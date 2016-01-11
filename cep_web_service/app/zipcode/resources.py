@@ -7,6 +7,7 @@ from flask_restful import Api, Resource, reqparse, abort
 import postmon
 
 from cep_web_service.app import app
+from cep_web_service.app.constants import NULL
 from .models import Zipcode
 
 zipcode_blueprint = Blueprint('api', __name__)
@@ -43,24 +44,23 @@ class ZipcodeResource(Resource):
                             " bairro: {bairro},"
                             " cidade: {cidade},"
                             " estado: {estado}").format(cep=cep,
+                                                        logradouro=logradouro if logradouro is not None else NULL,
+                                                        bairro=bairro if logradouro is not None else NULL,
+                                                        cidade=cidade_nome,
+                                                        estado=estado_nome)
+            app.info_logger.info(message)
+        else:
+            message = six.u("Document with cep {cep} has been updated with"
+                            " logradouro: {logradouro},"
+                            " bairro: {bairro},"
+                            " cidade: {cidade},"
+                            " estado: {estado}").format(cep=cep,
                                                         logradouro=logradouro,
                                                         bairro=bairro,
                                                         cidade=cidade_nome,
                                                         estado=estado_nome)
             app.info_logger.info(message)
-            return None, 201
-
-        message = six.u("Document with cep {cep} has been updated with"
-                        " logradouro: {logradouro},"
-                        " bairro: {bairro},"
-                        " cidade: {cidade},"
-                        " estado: {estado}").format(cep=cep,
-                                                    logradouro=logradouro,
-                                                    bairro=bairro,
-                                                    cidade=cidade_nome,
-                                                    estado=estado_nome)
-        app.info_logger.info(message)
-        return None, 200
+        return None, 201
 
     def get(self, zip_code=None):
         parser = reqparse.RequestParser()
@@ -78,7 +78,8 @@ class ZipcodeResource(Resource):
             app.info_logger.info("Listing {quantity} zip_codes".format(quantity=zip_codes_len))
             return [zip_code.to_dict() for zip_code in zip_codes], 200
         elif zip_code is not None:
-            zip_code_document = Zipcode.get_or_404(zip_code=zip_code)
+            zip_code_document = Zipcode.get_or_404(zip_code=zip_code,
+                                                   message="zip code {zip_code} not found.".format(zip_code=zip_code))
             app.info_logger.info("Get zip_code: {zip_code}".format(zip_code=zip_code))
             return zip_code_document.to_dict(), 200
         app.error_logger.error("No limit or zip_code option were found in the request")
@@ -88,7 +89,8 @@ class ZipcodeResource(Resource):
         if zip_code is None:
             app.error_logger.error("No zip_code were found in the request.")
             abort(400, messsage="You must pass pass a zip_code.")
-        zip_code_document = Zipcode.get_or_404(zip_code=zip_code)
+        zip_code_document = Zipcode.get_or_404(zip_code=zip_code,
+                                               message="zip code {zip_code} not found.".format(zip_code=zip_code))
         zip_code_document.delete()
         app.info_logger.info("zip_code: {zip_code} were deleted.".format(zip_code=zip_code))
         return None, 204
