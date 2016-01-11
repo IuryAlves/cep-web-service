@@ -1,4 +1,6 @@
 RESTFUL_JSON = {'ensure_ascii': False}
+PORT = 5000
+HOST = 'localhost'
 MONGO_HOST = 'localhost'
 MONGO_PORT = 27017
 ERROR_404_HELP = False

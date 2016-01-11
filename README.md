@@ -19,7 +19,7 @@ A Flask web service to handle CEP data
 
         pip install -r requirements/requirements.txt
         
-### You will also need to install mongodb. [Here](https://docs.mongodb.org/manual/installation/) is some good documentation about mongo installation.
+##### You will also need to install mongodb. [Here](https://docs.mongodb.org/manual/installation/) is some good documentation about mongo installation.
 
 After the installation you will need to create a folder to mongo store the data, usually is in /data/db
 
@@ -40,3 +40,5 @@ If you don't have sudo permissions or don't want use sudo, you can specify the `
 With virtualenv active do
 
     python cep_web_service/run.py
+    
+By default the project runs on port 5000 and ip
