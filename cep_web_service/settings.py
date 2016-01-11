@@ -1,7 +1,8 @@
 RESTFUL_JSON = {'ensure_ascii': False}
 MONGO_HOST = 'localhost'
 MONGO_PORT = 27017
-DEBUG = True
+ERROR_404_HELP = False
+DEBUG = False
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
