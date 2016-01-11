@@ -78,6 +78,10 @@ The same is valid for mongo instance
                 {
                     "message": "zip code 14020214260 is invalid"
                 }
+      
+      OR
+      
+      * **Code:** 400 BAD REQUEST
 
 * **Sample Call:**
 
@@ -155,7 +159,7 @@ The same is valid for mongo instance
          
       OR
    
-      * **Code:** 422 UNPROCESSABLE ENTRY
+      * **Code:** 404 NOT FOUND
       * **Content:**
                 {
                     "message": "zip code 3232 not found."
@@ -207,12 +211,12 @@ If the quantity of documents is lower than the limit, the server will return all
          
       OR
    
-      * **Code:** 422 NOT FOUND
+      * **Code:** 404 NOT FOUND
       * **Content:**
                 {
                     "message": "zip code 3232 not found."
                 }
-
+    
 
 * **Sample Call:**
 
