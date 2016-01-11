@@ -3,7 +3,7 @@
 import json
 import unittest
 
-from mock import patch, Mock
+from mock import patch, Mock, call
 import six
 
 import fakedata
@@ -99,13 +99,16 @@ class CepWebServiceTests(unittest.TestCase):
         endereco.assert_called_with(zip_code)
         logger.assert_called_with('Received invalid zip_code: {zip_code}'.format(zip_code=zip_code))
 
-    def test_get_zip_code_without_data(self):
+    @patch('cep_web_service.app.app.error_logger.error')
+    def test_get_zip_code_without_data(self, logger):
         response = self.test_app.get("/zipcode/")
 
         self.assertEquals(response.status_code, 400)
+        logger.assert_called_with("No limit or zip_code option were found in the request")
 
+    @patch('cep_web_service.app.app.info_logger.info')
     @patch('cep_web_service.app.zipcode.models.Zipcode.get_or_404')
-    def test_get_saved_zip_code(self, get_or_404):
+    def test_get_saved_zip_code(self, get_or_404, logger):
         get_or_404.return_value = fakedata.ZipcodeFake(fakedata.fake_endereco)
         zip_code = 14020260
         response = self.test_app.get('/zipcode/%i' % zip_code)
@@ -116,21 +119,44 @@ class CepWebServiceTests(unittest.TestCase):
 
         self.assertEquals(json.loads(response_data_decoded), get_or_404.return_value.to_dict())
         get_or_404.assert_called_with(zip_code=zip_code)
+        logger.assert_called_with("Get zip_code: {zip_code}".format(zip_code=zip_code))
 
+    @patch('cep_web_service.app.app.info_logger.info')
     @patch('cep_web_service.app.zipcode.models.Zipcode.limit')
-    def test_get_zip_codes(self, objects_query_set):
-        objects_query_set.return_value = fakedata.get_many_zip_codes()
+    def test_get_zip_codes(self, limit, logger):
+        limit.return_value = fakedata.get_many_zip_codes(how_many=10)
 
         response = self.test_app.get('/zipcode/', data={'limit': 10})
 
         self.assertEquals(response.status_code, 200)
 
-        expected = [zipcode.to_dict() for zipcode in objects_query_set.return_value]
+        expected = [zipcode.to_dict() for zipcode in limit.return_value]
         response_decoded = decode(response.data)
         self.assertEquals(json.loads(response_decoded), expected)
+        limit.assert_called_with(10)
+        logger.assert_called_with("Listing 10 zip_codes")
 
+    @patch('cep_web_service.app.app.info_logger.info')
+    @patch('cep_web_service.app.zipcode.models.Zipcode.limit')
+    def test_get_zip_codes_with_a_big_limit(self, limit, logger):
+        limit.return_value = fakedata.get_many_zip_codes(5)
+
+        response = self.test_app.get('/zipcode/', data={'limit': 20})
+
+        self.assertEquals(response.status_code, 200)
+
+        expected = [zipcode.to_dict() for zipcode in limit.return_value]
+        response_decoded = decode(response.data)
+        self.assertEquals(json.loads(response_decoded), expected)
+        limit.assert_called_with(20)
+        logger.assert_has_calls([
+            call("Received option to list 20 zipcodes but only 5 were found"),
+            call("Listing 5 zip_codes")
+        ])
+
+    @patch('cep_web_service.app.app.info_logger.info')
     @patch('cep_web_service.app.zipcode.models.Zipcode.get_or_404')
-    def test_delete_zip_code(self, get_or_404):
+    def test_delete_zip_code(self, get_or_404, logger):
         zip_code = 14020260
         get_or_404.return_value = Mock(fakedata.ZipcodeFake(fakedata.fake_endereco), spec_set=['delete'])
         response = self.test_app.delete('/zipcode/%i' % zip_code)
@@ -138,8 +164,11 @@ class CepWebServiceTests(unittest.TestCase):
         self.assertEquals(response.status_code, 204)
         get_or_404.assert_called_with(zip_code=zip_code)
         get_or_404.return_value.delete.assert_called_with()
+        logger.assert_called_with("zip_code: {zip_code} were deleted.".format(zip_code=zip_code))
 
-    def test_delete_zip_code_without_zip_code(self):
+    @patch('cep_web_service.app.app.error_logger.error')
+    def test_delete_zip_code_without_zip_code(self, logger):
         response = self.test_app.delete('/zipcode/')
 
         self.assertEquals(response.status_code, 400)
+        logger.assert_called_with("No zip_code were found in the request.")

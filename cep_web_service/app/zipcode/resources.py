@@ -34,13 +34,7 @@ class ZipcodeResource(Resource):
         cidade_nome = result.cidade.nome
         estado_nome = result.estado.nome
 
-        created = Zipcode.save_document(
-            cep,
-            logradouro,
-            bairro,
-            cidade_nome,
-            estado_nome
-        )
+        created = Zipcode.save_document(cep, logradouro, bairro, cidade_nome, estado_nome)
 
         if created:
             app.info_logger.info("Document created with data"
@@ -74,17 +68,27 @@ class ZipcodeResource(Resource):
         limit = args.get('limit')
         if limit is not None:
             zip_codes = Zipcode.limit(limit)
+            zip_codes_len = len(zip_codes)
+            if zip_codes_len < limit:
+                app.info_logger.info("Received option to list {limit}"
+                                     " zipcodes but only {quantity} were found".format(limit=limit,
+                                                                                       quantity=zip_codes_len))
+            app.info_logger.info("Listing {quantity} zip_codes".format(quantity=zip_codes_len))
             return [zip_code.to_dict() for zip_code in zip_codes], 200
         elif zip_code is not None:
             zip_code_document = Zipcode.get_or_404(zip_code=zip_code)
+            app.info_logger.info("Get zip_code: {zip_code}".format(zip_code=zip_code))
             return zip_code_document.to_dict(), 200
-        abort(400, message="You must provide the limit or zipcode.")
+        app.error_logger.error("No limit or zip_code option were found in the request")
+        abort(400, message="You must provide the limit or zip_code.")
 
     def delete(self, zip_code=None):
         if zip_code is None:
-            abort(400, messsage="You must pass pass a zip_code")
+            app.error_logger.error("No zip_code were found in the request.")
+            abort(400, messsage="You must pass pass a zip_code.")
         zip_code_document = Zipcode.get_or_404(zip_code=zip_code)
         zip_code_document.delete()
+        app.info_logger.info("zip_code: {zip_code} were deleted.".format(zip_code=zip_code))
         return None, 204
 
 api.add_resource(
