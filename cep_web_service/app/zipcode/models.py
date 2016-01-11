@@ -1,5 +1,6 @@
 from __future__ import absolute_import
-from mongoengine import queryset_manager, DoesNotExist
+from mongoengine import queryset_manager, DoesNotExist, MultipleObjectsReturned, ValidationError
+from flask_restful import abort
 from cep_web_service.app import db
 
 
@@ -14,8 +15,14 @@ class Zipcode(db.Document):
     }
 
     @classmethod
-    def get_or_404(cls, **kwargs):
-        return cls.objects.get_or_404(**kwargs)
+    def get_or_404(cls, *args, **kwargs):
+        message = kwargs.pop('message', None)
+        try:
+            return cls.objects.get(*args, **kwargs)
+        except (MultipleObjectsReturned, DoesNotExist, ValidationError):
+            if message is not None:
+                abort(404, message=message)
+            abort(404)
 
     @queryset_manager
     def limit(cls, queryset, limit):
