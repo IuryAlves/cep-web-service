@@ -93,7 +93,7 @@ The same is valid for mongo instance
 
 * **Sample Call:**
 
-        curl --data="zip_code=14020260" localhost:5000/zipcode/
+        curl --data "zip_code=14020260" localhost:5000/zipcode/
         
 **Title**
 ----
