@@ -37,27 +37,29 @@ class ZipcodeResource(Resource):
 
         created = Zipcode.save_document(cep, logradouro, bairro, cidade_nome, estado_nome)
         if created:
-            app.info_logger.info(six.u("Document created with data"
-                                 " cep: {cep},"
-                                 " logradouro: {logradouro},"
-                                 " bairro: {bairro},"
-                                 " cidade: {cidade},"
-                                 " estado: {estado}").format(cep=cep,
-                                                            logradouro=logradouro,
-                                                            bairro=bairro,
-                                                            cidade=cidade_nome,
-                                                            estado=estado_nome))
-            return None, 201
-
-        app.info_logger.info(six.u("Document with cep {cep} has been updated with"
-                             " logradouro: {logradouro},"
-                             " bairro: {bairro},"
-                             " cidade: {cidade},"
-                             " estado: {estado}").format(cep=cep,
+            message = six.u("Document created with data"
+                            " cep: {cep},"
+                            " logradouro: {logradouro},"
+                            " bairro: {bairro},"
+                            " cidade: {cidade},"
+                            " estado: {estado}").format(cep=cep,
                                                         logradouro=logradouro,
                                                         bairro=bairro,
                                                         cidade=cidade_nome,
-                                                        estado=estado_nome))
+                                                        estado=estado_nome)
+            app.info_logger.info(message)
+            return None, 201
+
+        message = six.u("Document with cep {cep} has been updated with"
+                        " logradouro: {logradouro},"
+                        " bairro: {bairro},"
+                        " cidade: {cidade},"
+                        " estado: {estado}").format(cep=cep,
+                                                    logradouro=logradouro,
+                                                    bairro=bairro,
+                                                    cidade=cidade_nome,
+                                                    estado=estado_nome)
+        app.info_logger.info(message)
         return None, 200
 
     def get(self, zip_code=None):

@@ -40,15 +40,15 @@ class CepWebServiceTests(unittest.TestCase):
         self.assertEquals(response.status_code, 201)
 
         # mock assertions
-        logger.assert_called_with(six.u("Document created with data"
-                                  " cep: {cep},"
-                                  " logradouro: {logradouro},"
-                                  " bairro: {bairro},"
-                                  " cidade: {cidade},"
-                                  " estado: {estado}").format(cep=cep, logradouro=logradouro,
-                                                             bairro=bairro, cidade=cidade_nome,
-                                                             estado=estado_nome))
-
+        expected_log_message = six.u("Document created with data"
+                                     " cep: {cep},"
+                                     " logradouro: {logradouro},"
+                                     " bairro: {bairro},"
+                                     " cidade: {cidade},"
+                                     " estado: {estado}").format(cep=cep, logradouro=logradouro,
+                                                                 bairro=bairro, cidade=cidade_nome,
+                                                                 estado=estado_nome)
+        logger.assert_called_with(expected_log_message)
         endereco.assert_called_once_with(zip_code)
         save_document.assert_called_once_with(cep, logradouro, bairro, cidade_nome, estado_nome)
 
@@ -71,13 +71,15 @@ class CepWebServiceTests(unittest.TestCase):
         self.assertEquals(response.status_code, 200)
 
         # mock assertions
-        logger.assert_called_with(six.u("Document with cep {cep} has been updated with"
-                                  " logradouro: {logradouro},"
-                                  " bairro: {bairro},"
-                                  " cidade: {cidade},"
-                                  " estado: {estado}").format(cep=cep, logradouro=logradouro,
-                                                             bairro=bairro, cidade=cidade_nome,
-                                                             estado=estado_nome))
+        expected_log_message = six.u("Document with cep {cep} has been updated with "
+                                     "logradouro: {logradouro},"
+                                     " bairro: {bairro},"
+                                     " cidade: {cidade},"
+                                     " estado: {estado}").format(cep=cep, logradouro=logradouro,
+                                                                 bairro=bairro, cidade=cidade_nome,
+                                                                 estado=estado_nome)
+
+        logger.assert_called_with(expected_log_message)
         endereco.assert_called_once_with(zip_code)
         save_document.assert_called_once_with(cep, logradouro, bairro, cidade_nome, estado_nome)
 
