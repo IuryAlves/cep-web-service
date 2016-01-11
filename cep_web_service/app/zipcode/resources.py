@@ -28,7 +28,7 @@ class ZipcodeResource(Resource):
         result = self.postmon.endereco(zip_code)
         if result is None:
             app.error_logger.error('Received invalid zip_code: {zip_code}'.format(zip_code=zip_code))
-            abort(404, message="zip code {zip_code} invalid".format(zip_code=zip_code))
+            abort(404, message="zip code {zip_code} is invalid".format(zip_code=zip_code))
 
         cep = result.cep
         logradouro = result.logradouro
