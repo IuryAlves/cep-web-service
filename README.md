@@ -2,7 +2,9 @@
 A web service powered by Python, Flask and Mongo to handle CEP data
 [![Build Status](https://travis-ci.org/IuryAlves/cep-web-service.svg?branch=master)](https://travis-ci.org/IuryAlves/cep-web-service) [![Coverage Status](https://coveralls.io/repos/IuryAlves/cep-web-service/badge.svg?branch=master&service=github)](https://coveralls.io/github/IuryAlves/cep-web-service?branch=master) [![PEP8](https://img.shields.io/badge/code%20style-pep8-orange.svg)](https://www.python.org/dev/peps/pep-0008/)
 
+**WARNING** The default settings of this project is not suitable for production.
 
+For example:`DEBUG` is set to true, for tests purposes. In production is better to have `DEBUG` set to false.
 # Table of contents
 1. [Installing](#installing)
 2. [running](#running)
