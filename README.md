@@ -3,7 +3,14 @@ A Flask web service to handle CEP data
 [![Build Status](https://travis-ci.org/IuryAlves/cep-web-service.svg?branch=master)](https://travis-ci.org/IuryAlves/cep-web-service) [![Coverage Status](https://coveralls.io/repos/IuryAlves/cep-web-service/badge.svg?branch=master&service=github)](https://coveralls.io/github/IuryAlves/cep-web-service?branch=master) [![PEP8](https://img.shields.io/badge/code%20style-pep8-orange.svg)](https://www.python.org/dev/peps/pep-0008/)
 
 
-# Installing
+# Table of contents
+1. [Installing](#installing)
+2. [running](#running)
+3. [API](#api)
+
+
+
+## Installing <a name="installing"></a>  
 
 * Install python 3
 * Install virtualenv
@@ -35,7 +42,7 @@ If you don't have sudo permissions or don't want use sudo, you can specify the `
         mongod --dbpath data/db
 
 
-## Running
+## Running <a name="running"></a>
 
 With virtualenv active do
 
@@ -47,7 +54,8 @@ You can change this configuration by modifying the ```cep_web_service/settings.p
 
 The same is valid for mongo instance
 
-## API
+
+## API <a name="api"></a>
 
 **Title**
 ----
